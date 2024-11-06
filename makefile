@@ -27,12 +27,18 @@ dokuwiki/%.txt: input/%.csv
 	-e 's/$$/ |/g'  \
 	$< > $@
 
+# This is a workaround to keep the line breaks. The
+# intermediate file latex/%.txt has ''NEWLINE'' placeholders:
 latex/%.txt: dokuwiki/%.txt
 	sed -e 's/\\\\ /NEWLINE /g' $< > $@
 
+# After converting to tex the placeholders become ''\newline{}''
+# commands in LaTeX. I also add specific column widths.
 latex/%.tex: latex/%.txt
-	@pandoc -f dokuwiki -t latex $< | \
-	sed -e 's/NEWLINE/\\newline{}/g' \
+	pandoc -f dokuwiki -t latex $< | \
+	sed \
+	-e 's/NEWLINE/\\newline{}/g' \
+	-e 's/@{}lllll@{}/@{}p{7cm}p{2.5cm}p{1cm}@{}p{7cm}p{5cm}@{}/g' \
 	> $@
 
 
