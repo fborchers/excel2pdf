@@ -12,7 +12,7 @@ dokufile:= $(patsubst input/%.ods,latex/%.txt,$(infile))
 latexfile:= $(patsubst input/%.ods,latex/%.tex,$(infile))
 
 
-# Extract from Libre Office file, 
+# Extract from Libre Office file ---
 # now a generic rule:
 input/%.csv: input/%.ods
 	@# 124 for |, 34 for "", 0 (System char set), 1 no of first row, 2 cell format text, c.f. https://help.libreoffice.org/7.3/en-US/text/shared/guide/csv_params.html?DbPAR=SHARED
@@ -27,22 +27,35 @@ dokuwiki/%.txt: input/%.csv
 	-e 's/$$/ |/g'  \
 	$< > $@
 
+
+# Convert to DokuWiki-Code ---
 # This is a workaround to keep the line breaks. The
 # intermediate file latex/%.txt has ''NEWLINE'' placeholders:
 latex/%.txt: dokuwiki/%.txt
-	sed -e 's/\\\\ /NEWLINE /g' $< > $@
+	@sed -e 's/\\\\ /NEWLINE /g' $< > $@
 
-# After converting to tex the placeholders become ''\newline{}''
-# commands in LaTeX. I also add specific column widths.
+
+# Prepare the LaTeX file ---
+# After converting to tex the placeholders have to be changed 
+# to ''\newline{}'' commands in LaTeX. 
+# I also add specific column widths:
+columnsspecified := @{}\
+p{7.0cm}<{\\raggedright}\
+p{2.5cm}<{\\raggedright}@{}\
+p{0.9cm}<{\\raggedright}@{}\
+p{7.0cm}<{\\raggedright}\
+p{5.0cm}<{\\raggedright}\
+@{}
+
 latex/%.tex: latex/%.txt
-	pandoc -f dokuwiki -t latex $< | \
+	@pandoc -f dokuwiki -t latex $< | \
 	sed \
 	-e 's/NEWLINE/\\newline{}/g' \
-	-e 's/@{}lllll@{}/@{}p{7cm}p{2.5cm}p{1cm}@{}p{7cm}p{5cm}@{}/g' \
+	-e 's/@{}lllll@{}/$(columnsspecified)/g' \
 	> $@
 
 
-# LaTeX
+# Das Kompilieren mit LaTeX ---
 # get the file name of the source tex file;
 # the file name must coincide with the directory's name:
 jobname := curriculum
