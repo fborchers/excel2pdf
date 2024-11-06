@@ -1,22 +1,49 @@
 
 
 
+ ######     ###    ##       ##       #### ##    ##  ######   
+##    ##   ## ##   ##       ##        ##  ###   ## ##    ##  
+##        ##   ##  ##       ##        ##  ####  ## ##        
+##       ##     ## ##       ##        ##  ## ## ## ##   #### 
+##       ######### ##       ##        ##  ##  #### ##    ##  
+##    ## ##     ## ##       ##        ##  ##   ### ##    ##  
+ ######  ##     ## ######## ######## #### ##    ##  ######   
 
-#infile:=input/curriculum1.ods
-infile:=input/klasse-07.ods
+# Calling Card -- source files are:
+odsfiles:= $(sort $(wildcard input/*.ods))
+csvfiles:= $(patsubst input/%.ods,input/%.csv,$(odsfiles))
+texfiles:= $(patsubst input/%.ods,latex/%.tex,$(odsfiles))
 
-intermfile:=$(patsubst input/%.ods,input/%.csv,$(infile))
+# TeX input routine to be used in creating the calling card:
+define texinput
+	"\input{$(1)}"
+endef
+
+# Each of the ods-files in the input/ directory will be called:
+callingcard:= build/callingcard.tex
+$(callingcard): | $(odsfiles)
+	@printf '%s\n' \
+	$(foreach file,$(texfiles),$(call texinput,$(file))) > $@
 
 
-dokufile:= $(patsubst input/%.ods,latex/%.txt,$(infile))
-latexfile:= $(patsubst input/%.ods,latex/%.tex,$(infile))
 
 
-# Extract from Libre Office file ---
-# now a generic rule:
+
+
+
+#######   ######## ##    ## ######## ########  ####  ######  
+##    ##  ##       ###   ## ##       ##     ##  ##  ##    ## 
+##        ##       ####  ## ##       ##     ##  ##  ##       
+##   #### ######   ## ## ## ######   ########   ##  ##       
+##    ##  ##       ##  #### ##       ##   ##    ##  ##       
+##    ##  ##       ##   ### ##       ##    ##   ##  ##    ## 
+ ######   ######## ##    ## ######## ##     ## ####  ######  
+
+
+# Extract from Libre Office file -- now a generic rule:
 input/%.csv: input/%.ods
 	@# 124 for |, 34 for "", 0 (System char set), 1 no of first row, 2 cell format text, c.f. https://help.libreoffice.org/7.3/en-US/text/shared/guide/csv_params.html?DbPAR=SHARED
-	@soffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":124,34,0,1,2 --outdir ./input/ $(infile) 1>/dev/null 2>/dev/null
+	@soffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":124,34,0,1,2 --outdir ./input/ $< 1>/dev/null 2>/dev/null
 
 # Create the txt-file in DokuWiki format. To do so, add a
 # pipe | at the end of each line, split double pipes (||):
@@ -36,17 +63,19 @@ latex/%.txt: dokuwiki/%.txt
 
 
 # Prepare the LaTeX file ---
-# After converting to tex the placeholders have to be changed 
-# to ''\newline{}'' commands in LaTeX. 
-# I also add specific column widths:
+
+# I add specific column widths:
 columnsspecified := @{}\
-p{7.0cm}<{\\raggedright}\
+p{8.0cm}<{\\raggedright}\
 p{2.5cm}<{\\raggedright}@{}\
-p{0.9cm}<{\\raggedright}@{}\
-p{7.0cm}<{\\raggedright}\
-p{5.0cm}<{\\raggedright}\
+p{0.8cm}<{\\raggedright}@{}\
+p{7.5cm}<{\\raggedright}\
+p{5.5cm}<{\\raggedright}\
 @{}
 
+# After converting to tex with pandoc
+# the placeholders have to be changed to ''\newline{}'' 
+# commands in LaTeX. Then I use the columns specified above:
 latex/%.tex: latex/%.txt
 	@pandoc -f dokuwiki -t latex $< | \
 	sed \
@@ -55,13 +84,24 @@ latex/%.tex: latex/%.txt
 	> $@
 
 
+
+
+
+
+##          ###    ######## ######## ##     ## 
+##         ## ##      ##    ##        ##   ##  
+##        ##   ##     ##    ##         ## ##   
+##       ##     ##    ##    ######      ###    
+##       #########    ##    ##         ## ##   
+##       ##     ##    ##    ##        ##   ##  
+######## ##     ##    ##    ######## ##     ## 
+
 # Das Kompilieren mit LaTeX ---
 # get the file name of the source tex file;
 # the file name must coincide with the directory's name:
 jobname := curriculum
 texfile := $(jobname).tex
 
-texfiles := $(texfile) $(latexfile)
 
 # main build files:
 dvifile:= build/$(jobname).dvi
@@ -85,25 +125,37 @@ view: | $(pdffile)
 TX := latex
 
 
-$(pdffile): $(texfiles)
+$(pdffile): $(texfile) $(texfiles) $(callingcard)
 	pdflatex --output-directory=build $(texfile) >> $(LOG) 2>&1
 
 
 
+
+########  ##     ##  #######  ##    ## ##    ## 
+##     ## ##     ## ##     ## ###   ##  ##  ##  
+##     ## ##     ## ##     ## ####  ##   ####   
+########  ######### ##     ## ## ## ##    ##    
+##        ##     ## ##     ## ##  ####    ##    
+##        ##     ## ##     ## ##   ###    ##    
+##        ##     ##  #######  ##    ##    ##    
+
 .PHONY: all clean echo test
 
 echo:
-	@echo $(infile)
+	@echo $(csvfiles)
 
 test: $(texfiles)
 	@echo $(texfiles)
 
-all: $(latexfile)
+
 
 clean: 
-	@rm -rf $(dokufile)
-	@rm -rf $(latexfile)
+	@rm -f $(pdffile)
+	@rm -f $(callingcard)
+	@rm -f $(LOG)
+
+
 
 distclean: clean
-	@rm -rf $(intermfile)
-	@rm -rf $(pdffile)
+	@rm -f $(texfiles)
+	@rm -f $(csvfiles)
