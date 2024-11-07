@@ -12,7 +12,10 @@
 # Calling Card -- source files are:
 odsfiles:= $(sort $(wildcard input/*.ods))
 csvfiles:= $(patsubst input/%.ods,input/%.csv,$(odsfiles))
+dokufiles:=$(patsubst input/%.ods,dokuwiki/%.txt,$(odsfiles))
 texfiles:= $(patsubst input/%.ods,latex/%.tex,$(odsfiles))
+
+.intermediate: $(dokufiles)
 
 # TeX input routine to be used in creating the calling card:
 define texinput
@@ -75,12 +78,15 @@ p{5.5cm}<{\\raggedright}\
 
 # After converting to tex with pandoc
 # the placeholders have to be changed to ''\newline{}'' 
-# commands in LaTeX. Then I use the columns specified above:
+# commands in LaTeX. Then I use the columns specified above.
+# Zeilenumbrüche \\ werden ersetzt durch Zeilenumbrüche mit Trennlinie, 
+# also \\ \midrule. Die letzte midrule einer Datei muss noch entfernt werden.
 latex/%.tex: latex/%.txt
 	@pandoc -f dokuwiki -t latex $< | \
 	sed \
 	-e 's/NEWLINE/\\newline{}/g' \
 	-e 's/@{}lllll@{}/$(columnsspecified)/g' \
+	-e 's/\\\\/\\\\ \\midrule/g' \
 	> $@
 
 
