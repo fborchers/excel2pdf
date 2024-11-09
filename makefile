@@ -15,7 +15,7 @@ csvfiles:= $(patsubst input/%.ods,input/%.csv,$(odsfiles))
 dokufiles:=$(patsubst input/%.ods,dokuwiki/%.txt,$(odsfiles))
 texfiles:= $(patsubst input/%.ods,latex/%.tex,$(odsfiles))
 
-.intermediate: $(dokufiles)
+.INTERMEDIATE: $(dokufiles)
 
 # TeX input routine to be used in creating the calling card:
 define texinput
@@ -145,7 +145,7 @@ $(pdffile): $(texfile) $(texfiles) $(callingcard)
 ##        ##     ## ##     ## ##   ###    ##    
 ##        ##     ##  #######  ##    ##    ##    
 
-.PHONY: all clean echo test
+.PHONY: csv all clean echo test
 
 echo:
 	@echo $(csvfiles)
@@ -154,6 +154,16 @@ test: $(texfiles)
 	@echo $(texfiles)
 
 
+csv: $(csvfiles)
+
+
+ ######  ##       ########    ###    ##    ## 
+##    ## ##       ##         ## ##   ###   ## 
+##       ##       ##        ##   ##  ####  ## 
+##       ##       ######   ##     ## ## ## ## 
+##       ##       ##       ######### ##  #### 
+##    ## ##       ##       ##     ## ##   ### 
+ ######  ######## ######## ##     ## ##    ## 
 
 clean: 
 	@rm -f $(pdffile)
@@ -165,3 +175,8 @@ clean:
 distclean: clean
 	@rm -f $(texfiles)
 	@rm -f $(csvfiles)
+	@rm -f build/curriculum.aux
+	@rm -f build/curriculum.log
+	@rm -f build/curriculum.out
+	@rm -f build/curriculum.toc
+
