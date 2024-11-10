@@ -178,19 +178,19 @@ $(pdffile): $(texfile) $(texfiles) $(callingcard)
 ##        ##     ## ##     ## ##   ###    ##    
 ##        ##     ##  #######  ##    ##    ##    
 
-.PHONY: csv all clean echo test
+.PHONY: csv tex all clean echo test
 
 echo:
 	@echo $(csvfiles)
 
-test: $(texfiles)
-	@echo $(texfiles)
-
+tex: $(texfiles)
+	@echo "  " $(texfiles)
 
 csv: $(csvfiles)
+	@echo "  " $(csvfiles)
 
 
- ######  ##       ########    ###    ##    ## 
+#######  ##       ########    ###    ##    ## 
 ##    ## ##       ##         ## ##   ###   ## 
 ##       ##       ##        ##   ##  ####  ## 
 ##       ##       ######   ##     ## ## ## ## 
