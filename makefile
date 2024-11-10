@@ -9,13 +9,27 @@
 ##    ## ##     ## ##       ##        ##  ##   ### ##    ##  
  ######  ##     ## ######## ######## #### ##    ##  ######   
 
-# Calling Card -- source files are:
-odsfiles:= $(sort $(wildcard input/*.ods))
-csvfiles:= $(patsubst input/%.ods,input/%.csv,$(odsfiles))
-dokufiles:=$(patsubst input/%.ods,dokuwiki/%.txt,$(odsfiles))
-texfiles:= $(patsubst input/%.ods,latex/%.tex,$(odsfiles))
 
-.INTERMEDIATE: $(dokufiles)
+# Sub-directories are:
+INPUT:=input
+CSV:=csv
+DOKUWIKI:= dokuwiki
+LATEX:= latex
+BUILD:= build
+
+# Calling Card -- source files are:
+odsfiles:= $(sort $(wildcard $(INPUT)/*.ods))
+
+# Intermediate files are:
+csvfiles:= $(patsubst $(INPUT)/%.ods,$(CSV)/%.csv,$(odsfiles))
+dokufiles:=$(patsubst $(INPUT)/%.ods,$(DOKUWIKI)/%.txt,$(odsfiles))
+texfiles:= $(patsubst $(INPUT)/%.ods,$(LATEX)/%.tex,$(odsfiles))
+
+.PRECIOUS: $(csvfiles) $(dokufiles)
+
+
+
+# Calling Card ---
 
 # TeX input routine to be used in creating the calling card:
 define texinput
@@ -23,7 +37,7 @@ define texinput
 endef
 
 # Each of the ods-files in the input/ directory will be called:
-callingcard:= build/callingcard.tex
+callingcard:= $(BUILD)/callingcard.tex
 $(callingcard): | $(odsfiles)
 	@printf '%s\n' \
 	$(foreach file,$(texfiles),$(call texinput,$(file))) > $@
@@ -43,7 +57,7 @@ $(callingcard): | $(odsfiles)
 # DICTIONARY ---
 # Spezieller LaTeX-Code aus dem dictionary wird ersetzt. Dazu wird das dictionary erzeugt aus der Datei ''lib/dictionary.txt'':
 DICT := lib/dictionary.csv
-SEDSCRIPT:= build/dictionary.sed
+SEDSCRIPT:= $(BUILD)/dictionary.sed
 
 # Use the dictionary to build a sed-compatible scriptfile. This SEDSCRIPT 
 # will be used to generate the TeX code (see below). 
@@ -70,14 +84,14 @@ $(SEDSCRIPT): $(DICT)
 
 
 # Extract from Libre Office file -- now a generic rule:
-input/%.csv: input/%.ods
+$(CSV)/%.csv: $(INPUT)/%.ods
 	@# 124 for |, 34 for "", 0 (System char set), 1 no of first row, 2 cell format text, c.f. https://help.libreoffice.org/7.3/en-US/text/shared/guide/csv_params.html?DbPAR=SHARED
-	@soffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":124,34,0,1,2 --outdir ./input/ $< 1>/dev/null 2>/dev/null
+	@soffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":124,34,0,1,2 --outdir ./$(CSV)/ $< 1>/dev/null 2>/dev/null
 
 # Create the txt-file in DokuWiki format. To do so, add a
 # pipe | at the end of each line, split double pipes (||):
 #  	-e 's/^/| /g' # Zeilenanfang
-dokuwiki/%.txt: input/%.csv
+$(DOKUWIKI)/%.txt: $(CSV)/%.csv
 	@sed \
 	-e 's/||/| |/g' \
 	-e 's/$$/ |/g'  \
@@ -86,8 +100,8 @@ dokuwiki/%.txt: input/%.csv
 
 # Prepare the LaTeX conversion ---
 # This is a workaround to keep the line breaks. The
-# intermediate file latex/%.txt has ''NEWLINE'' placeholders:
-latex/%.txt: dokuwiki/%.txt
+# intermediate file $(LATEX)/%.txt has ''NEWLINE'' placeholders:
+$(LATEX)/%.txt: $(DOKUWIKI)/%.txt
 	@sed -e 's/\\\\ /NEWLINE /g' $< > $@
 # This code will then be used to create the tex files. But first we 
 # need to build the dictionary with the LaTeX supplementaries.
@@ -116,7 +130,7 @@ p{5.5cm}<{\\raggedright}\
 # also mit ''\\ \midrule''. 
 # Die letzte midrule einer Datei muss noch entfernt werden.
 # Das dictionary wird verwendet, um speziellen LaTeX-Code einzufügen.
-latex/%.tex: latex/%.txt $(SEDSCRIPT)
+$(LATEX)/%.tex: $(LATEX)/%.txt $(SEDSCRIPT)
 	@pandoc -f dokuwiki -t latex $< | \
 	sed \
 	-e 's/NEWLINE/\\newline{}/g' \
@@ -143,12 +157,12 @@ texfile := $(jobname).tex
 
 
 # main build files:
-dvifile:= build/$(jobname).dvi
-psfile := build/$(jobname).ps
-pdffile:= build/$(jobname).pdf
+dvifile:= $(BUILD)/$(jobname).dvi
+psfile := $(BUILD)/$(jobname).ps
+pdffile:= $(BUILD)/$(jobname).pdf
 
 # Logfiles
-LOG = build/compile.log
+LOG = $(BUILD)/compile.log
 
 
 # BUILD PROCESS --------
@@ -165,7 +179,7 @@ TX := latex
 
 
 $(pdffile): $(texfile) $(texfiles) $(callingcard)
-	pdflatex --output-directory=build $(texfile) >> $(LOG) 2>&1
+	pdflatex --output-directory=$(BUILD) $(texfile) >> $(LOG) 2>&1
 
 
 
@@ -208,9 +222,9 @@ clean:
 distclean: clean
 	@rm -f $(texfiles)
 	@rm -f $(csvfiles)
-	@rm -f build/curriculum.aux
-	@rm -f build/curriculum.log
-	@rm -f build/curriculum.out
-	@rm -f build/curriculum.toc
+	@rm -f $(BUILD)/curriculum.aux
+	@rm -f $(BUILD)/curriculum.log
+	@rm -f $(BUILD)/curriculum.out
+	@rm -f $(BUILD)/curriculum.toc
 	@rm -f $(SEDSCRIPT)
 
