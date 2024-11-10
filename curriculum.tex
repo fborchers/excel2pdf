@@ -10,10 +10,11 @@
 \usepackage{geometry}
 \geometry{%
 	landscape,%
-	margin=10mm,
-	left=5mm,right=5mm,
+	top=8mm,
+	left=5mm,right=8mm,
 	bottom=20mm
 }
+
 
 \parindent=0pt
 
@@ -26,11 +27,18 @@
 %% hyperlinks:
 \usepackage{hyperref}% load hyperref last.
 
+\usepackage{fancyhdr}
 
 
 \title{Schulcurriculum Gess ab 2025}
 
 \begin{document}
+
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\fancyhead{}
+\fancyfoot{}
+\fancyfoot[RE,RO]{Seite~\thepage}
 
 % Titlepage:
 %{\LARGE\textbf{Vokabellisten}} % change title here!
