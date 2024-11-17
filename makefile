@@ -25,23 +25,33 @@ csvfiles:= $(patsubst $(INPUT)/%.ods,$(CSV)/%.csv,$(odsfiles))
 dokufiles:=$(patsubst $(INPUT)/%.ods,$(DOKUWIKI)/%.txt,$(odsfiles))
 texfiles:= $(patsubst $(INPUT)/%.ods,$(LATEX)/%.tex,$(odsfiles))
 
-.PRECIOUS: $(csvfiles) $(dokufiles)
-
-
-
 # Calling Card ---
 
 # TeX input routine to be used in creating the calling card:
 define texinput
-	"\input{$(1)}"
+	"\clearpage\subsection*{$(1)}\input{$(1)}"
 endef
 
 # Each of the ods-files in the input/ directory will be called:
-callingcard:= $(BUILD)/callingcard.tex
-$(callingcard): | $(odsfiles)
-	@printf '%s\n' \
-	$(foreach file,$(texfiles),$(call texinput,$(file))) > $@
-
+callingcard:= $(BUILD)/callingcard
+$(callingcard).txt: | $(odsfiles)
+	@# Initialise:
+	@printf '%s\n\n' '% Calling card für das Curriculum --------' > $@
+	@# Call all the odsfiles present in the input directory:
+	@printf '%s\n\n' \
+	$(foreach file,$(texfiles),$(call texinput,$(file))) >> $@
+	
+$(callingcard).tex: $(callingcard).txt
+	@sed \
+		 -e 's#*{latex/klasse-07.tex#*{Klasse  7#g' \
+		 -e 's#*{latex/klasse-08.tex#*{Klasse  8#g' \
+		 -e 's#*{latex/klasse-09.tex#*{Klasse  9 -- Gymnasium#g' \
+		-e 's#*{latex/klasse-09r.tex#*{Klasse  9 -- Realschulbildungsgang#g' \
+		-e 's#*{latex/klasse-09z.tex#*{Klasse  9 -- Hauptschulbildungsgang#g' \
+		 -e 's#*{latex/klasse-10.tex#*{Klasse 10 -- Gymnasium#g' \
+		-e 's#*{latex/klasse-10r.tex#*{Klasse 10 -- Realschulbildungsgang#g' \
+		-e 's#*{latex/klasse-10z.tex#*{Klasse 10 -- Hauptschulbildungsgang#g' \
+		$< > $@
 
 
 
@@ -82,6 +92,7 @@ $(SEDSCRIPT): $(DICT)
 ##    ##  ##       ##   ### ##       ##    ##   ##  ##    ## 
  ######   ######## ##    ## ######## ##     ## ####  ######  
 
+.PRECIOUS: $(csvfiles) $(dokufiles)
 
 # Extract from Libre Office file -- now a generic rule:
 $(CSV)/%.csv: $(INPUT)/%.ods
@@ -116,7 +127,7 @@ $(LATEX)/%.txt: $(DOKUWIKI)/%.txt
 
 # I add specific column widths:
 columnsspecified := @{}\
-p{8.0cm}<{\\raggedright}\
+p{8.0cm}<{\\raggedright}@{}\
 p{2.5cm}<{\\raggedright}@{}\
 p{0.8cm}<{\\raggedright}@{}\
 p{7.5cm}<{\\raggedright}\
@@ -180,7 +191,7 @@ view: | $(outfile)
 TX := latex
 
 
-$(pdffile): $(texfile) $(texfiles) $(callingcard)
+$(pdffile): $(texfile) $(texfiles) $(callingcard).tex
 	@pdflatex --output-directory=$(BUILD) $(texfile) >> $(LOG) 2>&1
 
 $(outfile): $(pdffile)
@@ -218,7 +229,8 @@ csv: $(csvfiles)
 clean: 
 	@rm -f $(pdffile)
 	@rm -f $(outfile)
-	@rm -f $(callingcard)
+	@rm -f $(callingcard).txt
+	@rm -f $(callingcard).tex
 	@rm -f $(LOG)
 
 
