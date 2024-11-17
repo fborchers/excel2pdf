@@ -125,13 +125,15 @@ $(LATEX)/%.txt: $(DOKUWIKI)/%.txt
 
 # Prepare the LaTeX file ---
 
-# I add specific column widths:
+# I add specific column widths. Note the difference between
+#   \raggedright (no hyphenation) and
+#   \RaggedRight (with hyphenation, from ragged2e package)
 columnsspecified := @{}\
-p{8.0cm}<{\\raggedright}@{}\
-p{2.5cm}<{\\raggedright}@{}\
-p{0.8cm}<{\\raggedright}@{}\
-p{7.5cm}<{\\raggedright}\
-p{5.5cm}<{\\raggedright}\
+p{8.0cm}<{\\RaggedRight}\
+p{2.5cm}<{\\RaggedRight}@{}\
+p{0.8cm}<{\\RaggedRight}@{}\
+p{7.5cm}<{\\RaggedRight}\
+p{5.5cm}<{\\RaggedRight}\
 @{}
 
 # After converting to tex with pandoc the routine //sed// will be called:
@@ -232,15 +234,17 @@ clean:
 	@rm -f $(callingcard).txt
 	@rm -f $(callingcard).tex
 	@rm -f $(LOG)
+	@rm -f $(texfiles)
+	@rm -f $(dokufiles)
 
 
 
 distclean: clean
-	@rm -f $(texfiles)
 	@rm -f $(csvfiles)
 	@rm -f $(BUILD)/curriculum.aux
 	@rm -f $(BUILD)/curriculum.log
 	@rm -f $(BUILD)/curriculum.out
 	@rm -f $(BUILD)/curriculum.toc
+	@# remove the sed script for the dictionary:
 	@rm -f $(SEDSCRIPT)
 
