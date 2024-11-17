@@ -160,6 +160,7 @@ texfile := $(jobname).tex
 dvifile:= $(BUILD)/$(jobname).dvi
 psfile := $(BUILD)/$(jobname).ps
 pdffile:= $(BUILD)/$(jobname).pdf
+outfile:= $(jobname).pdf
 
 # Logfiles
 LOG = $(BUILD)/compile.log
@@ -170,18 +171,20 @@ LOG = $(BUILD)/compile.log
 
 dvi: $(dvifile)
 ps : $(psfile)
-pdf: $(pdffile)
-view: | $(pdffile)
-	@open $(pdffile)
+pdf: $(outfile)
+
+view: | $(outfile)
+	@open $(outfile)
 
 # Engine:
 TX := latex
 
 
 $(pdffile): $(texfile) $(texfiles) $(callingcard)
-	pdflatex --output-directory=$(BUILD) $(texfile) >> $(LOG) 2>&1
+	@pdflatex --output-directory=$(BUILD) $(texfile) >> $(LOG) 2>&1
 
-
+$(outfile): $(pdffile)
+	@cp $< $@
 
 
 ########  ##     ##  #######  ##    ## ##    ## 
@@ -195,7 +198,7 @@ $(pdffile): $(texfile) $(texfiles) $(callingcard)
 .PHONY: csv tex all clean echo test
 
 echo:
-	@echo $(csvfiles)
+	@echo $(jobname)
 
 tex: $(texfiles)
 	@echo "  " $(texfiles)
@@ -214,6 +217,7 @@ csv: $(csvfiles)
 
 clean: 
 	@rm -f $(pdffile)
+	@rm -f $(outfile)
 	@rm -f $(callingcard)
 	@rm -f $(LOG)
 
