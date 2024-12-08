@@ -43,14 +43,25 @@ $(callingcard).txt: | $(odsfiles)
 	
 $(callingcard).tex: $(callingcard).txt
 	@sed \
-		 -e 's#*{latex/klasse-07.tex#*{Klasse  7#g' \
-		 -e 's#*{latex/klasse-08.tex#*{Klasse  8#g' \
-		 -e 's#*{latex/klasse-09.tex#*{Klasse  9 -- Gymnasium#g' \
-		-e 's#*{latex/klasse-09r.tex#*{Klasse  9 -- Realschulbildungsgang#g' \
-		-e 's#*{latex/klasse-09z.tex#*{Klasse  9 -- Hauptschulbildungsgang#g' \
-		 -e 's#*{latex/klasse-10.tex#*{Klasse 10 -- Gymnasium#g' \
-		-e 's#*{latex/klasse-10r.tex#*{Klasse 10 -- Realschulbildungsgang#g' \
-		-e 's#*{latex/klasse-10z.tex#*{Klasse 10 -- Hauptschulbildungsgang#g' \
+		 -e 's#*{latex/klasse-07.tex#*{Klasse  7#' \
+		 -e 's#*{latex/klasse-08.tex#*{Klasse  8#' \
+		 -e 's#*{latex/klasse-09.tex#*{Klasse  9   -- Gymnasium#' \
+		-e 's#*{latex/klasse-09r.tex#*{Klasse  9   -- Realschulbildungsgang#' \
+		-e 's#*{latex/klasse-09z.tex#*{Klasse  9   -- Hauptschulbildungsgang#' \
+		 -e 's#*{latex/klasse-10.tex#*{Klasse 10   -- Gymnasium#' \
+		-e 's#*{latex/klasse-10r.tex#*{Klasse 10   -- Realschulbildungsgang#' \
+		-e 's#*{latex/klasse-10z.tex#*{Klasse 10   -- Hauptschulbildungsgang#' \
+		-e 's#*{latex/klasse-11.1-elehre.tex#*{Klasse 11.1: Elektrizitätslehre   -- Qualifikationsphase Abitur#' \
+		-e 's#*{latex/klasse-11.1-elektromgn.tex#*{Klasse 11.1: Elektromagnetismus   -- Qualifikationsphase Abitur#' \
+		-e 's#*{latex/klasse-11.2-ScWeWo.tex#*{Klasse 11.2: Schwingungen und Wellen   -- Qualifikationsphase Abitur#' \
+		-e 's#*{latex/klasse-12.1-quanten.tex#*{Klasse 12.1: Quantenphysik   -- Qualifikationsphase Abitur#' \
+		-e 's#*{latex/klasse-12.2-atom.tex#*{Klasse 12.1: Atomphysik   -- Qualifikationsphase Abitur#' \
+		-e 's#*{latex/klasse-12.3-kern.tex#*{Klasse 12.2: Kernphysik   -- Qualifikationsphase Abitur#' \
+	   -e 's#*{latex/qphase-11.1.tex#*{Klasse 11.1 -- Qualifikationsphase Abitur#' \
+	   -e 's#*{latex/qphase-11.2.tex#*{Klasse 11.2 -- Qualifikationsphase Abitur#' \
+	   -e 's#*{latex/qphase-12.1.tex#*{Klasse 12.1 -- Qualifikationsphase Abitur#' \
+	   -e 's#*{latex/qphase-12.2-astro.tex#*{Klasse 12.2 -- Wahlbereich Astronomie#' \
+	   -e 's#*{latex/qphase-12.2-relativity.tex#*{Klasse 12.2 -- Wahlbereich Relativitätstheorie#' \
 		$< > $@
 
 
@@ -130,7 +141,7 @@ $(LATEX)/%.txt: $(DOKUWIKI)/%.txt
 #   \RaggedRight (with hyphenation, from ragged2e package)
 columnsspecified := @{}\
 p{8.0cm}<{\\RaggedRight}\
-p{2.5cm}<{\\RaggedRight}@{}\
+p{2.5cm}<{\\RaggedRight}\
 p{0.8cm}<{\\RaggedRight}@{}\
 p{7.5cm}<{\\RaggedRight}\
 p{5.5cm}<{\\RaggedRight}\
@@ -194,7 +205,7 @@ TX := latex
 
 
 $(pdffile): $(texfile) $(texfiles) $(callingcard).tex
-	@pdflatex --output-directory=$(BUILD) $(texfile) >> $(LOG) 2>&1
+	pdflatex --output-directory=$(BUILD) $(texfile) >> $(LOG) 2>&1
 
 $(outfile): $(pdffile)
 	@cp $< $@

@@ -1,6 +1,8 @@
 et cetera	\\emph{et cetera}
 FORMELSPRACHE	FORMELSPRACHE
 a∙b = c∙d	$a\\cdot b = c\\cdot d$
+a ∙ b = c ∙ d	$a\\cdot b = c\\cdot d$
+a = b ∙ c ∙ d	$a\\cdot b = c\\cdot d$
 α-	$\\alpha$-
 β-	$\\beta$-
 γ-	$\\gamma$-
