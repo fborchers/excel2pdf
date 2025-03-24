@@ -83,12 +83,12 @@ SEDSCRIPT:= $(BUILD)/dictionary.sed
 # Use the dictionary to build a sed-compatible scriptfile. This SEDSCRIPT 
 # will be used to generate the TeX code (see below). 
 $(SEDSCRIPT): $(DICT)
-	@#  's#^#s/#'  add a 's/' at the beginning of the line
-	@#  's#\t#/#'  replace a \tab with a slash /
-	@#  's#$$#/g#' add a slash /g at the end of the line 
+	@#  's#^#s|#'  add a 's|' at the beginning of the line
+	@#  's#\t#|#'  replace a \tab with a pipe |
+	@#  's#$$#|g#' add a slash |g at the end of the line 
 	@# 			   (make will collaps $$ to $ for bash.)
 	@#  's#[#\\[#g'
-	@sed -e 's#^#s/#' -e 's#\t\t#/#' -e 's#\t#/#' -e 's#$$#/g#' $< >$@
+	@sed -e 's#^#s|#' -e 's#\t\t#|#' -e 's#\t#|#' -e 's#$$#|g#' $< >$@
 # This script file will be used with all the tex-files below.
 
 
@@ -223,12 +223,28 @@ $(outfile): $(pdffile)
 
 echo:
 	@echo $(jobname)
+	@echo $(texfiles)
 
 tex: $(texfiles)
 	@echo "  " $(texfiles)
 
 csv: $(csvfiles)
 	@echo "  " $(csvfiles)
+
+
+######## ########  ######  ######## 
+   ##    ##       ##    ##    ##    
+   ##    ##       ##          ##    
+   ##    ######    ######     ##    
+   ##    ##             ##    ##    
+   ##    ##       ##    ##    ##    
+   ##    ########  ######     ##    
+
+test:
+	@echo "...Looking for pdflatex..."
+	pdflatex -v
+	@echo "\n...Looking for LibreOffice's soffice ..."
+	soffice --version
 
 
 #######  ##       ########    ###    ##    ## 

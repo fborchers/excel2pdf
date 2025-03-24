@@ -3,6 +3,9 @@ FORMELSPRACHE	FORMELSPRACHE
 a∙b = c∙d	$a\\cdot b = c\\cdot d$
 a ∙ b = c ∙ d	$a\\cdot b = c\\cdot d$
 a = b ∙ c ∙ d	$a\\cdot b = c\\cdot d$
+ω = 2π/T	$\\omega = 2\\pi/T$
+f=1/T	$f=1/T$
+I-t-Diagramm	$I$-$t$-Diagramm
 α-	$\\alpha$-
 β-	$\\beta$-
 γ-	$\\gamma$-
@@ -12,3 +15,4 @@ Reflexionsgesetz	Reflexions\\-gesetz
 Elektromagnetische	Elektro\\-ma\\-gne\\-tische
 Erhaltungssätze	Erhaltungs\-sätze
 U-I-Kennlinie	$U$-$I$-Kenn\\-linie
+Quantenphysikalische	Quanten\\-phy\\-si\\-ka\\-lische
