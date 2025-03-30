@@ -34,7 +34,7 @@ endef
 
 # Each of infiles in the input/ directory will be called:
 callingcard:= $(BUILD)/callingcard
-$(callingcard).txt: | $(infiles)
+$(callingcard).txt: | $(texfiles)
 	@# Initialise:
 	@printf '%s\n\n' '% Calling card für das Curriculum --------' > $@
 	@# Call all the infiles present in the input directory:
@@ -223,7 +223,7 @@ $(outfile): $(pdffile)
 
 echo:
 	@echo $(jobname)
-	@echo $(texfiles)
+	@echo $(infiles)
 
 tex: $(texfiles)
 	@echo "  " $(texfiles)
