@@ -17,7 +17,7 @@ DOKUWIKI:= dokuwiki
 LATEX:= latex
 BUILD:= build
 
-# Calling Card -- source files are:
+# Source files are the Excel sheets:
 infiles:= $(sort $(wildcard $(INPUT)/*.xlsx))
 
 # Intermediate files are:
@@ -25,22 +25,24 @@ csvfiles:= $(patsubst $(INPUT)/%.xlsx,$(CSV)/%.csv,$(infiles))
 dokufiles:=$(patsubst $(INPUT)/%.xlsx,$(DOKUWIKI)/%.txt,$(infiles))
 texfiles:= $(patsubst $(INPUT)/%.xlsx,$(LATEX)/%.tex,$(infiles))
 
-# Calling Card ---
+
+# Build Routine for the Calling Card ---
 
 # TeX input routine to be used in creating the calling card:
 define texinput
 	"\clearpage\subsection*{$(1)}\input{$(1)}"
 endef
 
-# Each of infiles in the input/ directory will be called:
+# Each of texfiles in the latex/ directory will be called by pdflatex:
 callingcard:= $(BUILD)/callingcard
 $(callingcard).txt: | $(texfiles)
 	@# Initialise:
 	@printf '%s\n\n' '% Calling card für das Curriculum --------' > $@
-	@# Call all the infiles present in the input directory:
+	@# Call all the texfiles present in the latex/ sub-directory:
 	@printf '%s\n\n' \
 	$(foreach file,$(texfiles),$(call texinput,$(file))) >> $@
-	
+
+# Exchange the file name for a proper section heading:
 $(callingcard).tex: $(callingcard).txt
 	@sed \
 		 -e 's#*{latex/klasse-07.tex#*{Klasse  7#' \
@@ -105,14 +107,15 @@ $(SEDSCRIPT): $(DICT)
 
 .PRECIOUS: $(csvfiles) $(dokufiles)
 
-# Extract from Libre Office file -- now a generic rule:
+# Extract from the infiles. This is a generic rule that will apply to 
+# all input files:
 $(CSV)/%.csv: $(INPUT)/%.xlsx
 	@# 124 for |, 34 for "", 0 (System char set), 1 no of first row, 2 cell format text, c.f. https://help.libreoffice.org/7.3/en-US/text/shared/guide/csv_params.html?DbPAR=SHARED
 	@soffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":124,34,0,1,2 --outdir ./$(CSV)/ $< 1>/dev/null 2>/dev/null
 
 # Create the txt-file in DokuWiki format. To do so, add a
-# pipe | at the end of each line, split double pipes (||):
-#  	-e 's/^/| /g' # Zeilenanfang
+# pipe | at the end ($$) of each line, and split double pipes (||):
+#  	-e 's/^/| /g' # matches the beginning of a line
 $(DOKUWIKI)/%.txt: $(CSV)/%.csv
 	@sed \
 	-e 's/||/| |/g' \
@@ -122,7 +125,8 @@ $(DOKUWIKI)/%.txt: $(CSV)/%.csv
 
 # Prepare the LaTeX conversion ---
 # This is a workaround to keep the line breaks. The
-# intermediate file $(LATEX)/%.txt has ''NEWLINE'' placeholders:
+# intermediate file $(LATEX)/%.txt has ''NEWLINE'' placeholders. The
+# placeholders will later be replaced by \newline (see below).
 $(LATEX)/%.txt: $(DOKUWIKI)/%.txt
 	@sed -e 's/\\\\ /NEWLINE /g' $< > $@
 # This code will then be used to create the tex files. But first we 
@@ -141,19 +145,20 @@ $(LATEX)/%.txt: $(DOKUWIKI)/%.txt
 #   \RaggedRight (with hyphenation, from ragged2e package)
 columnsspecified := @{}\
 p{8.0cm}<{\\RaggedRight}\
-p{2.5cm}<{\\RaggedRight}\
+p{2.5cm}<{\\RaggedRight}@{}\
 p{0.8cm}<{\\RaggedRight}@{}\
 p{7.5cm}<{\\RaggedRight}\
 p{5.5cm}<{\\RaggedRight}\
 @{}
 
 # After converting to tex with pandoc the routine //sed// will be called:
-# The placeholders have to be changed to ''\newline{}'' 
-# commands in LaTeX. Then I use the columns specified above.
+# The NEWLINE placeholders have to be changed to ''\newline{}'' 
+# commands in LaTeX. We then use the columns specified above.
 # Zeilenumbrüche \\ werden ersetzt durch Zeilenumbrüche mit Trennlinie, 
 # also mit ''\\ \midrule''. 
 # Die letzte midrule einer Datei muss noch entfernt werden.
-# Das dictionary wird verwendet, um speziellen LaTeX-Code einzufügen.
+# Das dictionary SEDSCRIPT wird verwendet, um speziellen LaTeX-Code 
+# einzufügen, z.B. Formeln und andere Mathematik.
 $(LATEX)/%.tex: $(LATEX)/%.txt $(SEDSCRIPT)
 	@pandoc -f dokuwiki -t latex $< | \
 	sed \
@@ -200,8 +205,6 @@ pdf: $(outfile)
 view: | $(outfile)
 	@open $(outfile)
 
-# Engine:
-TX := latex
 
 
 $(pdffile): $(texfile) $(texfiles) $(callingcard).tex
@@ -262,12 +265,12 @@ clean:
 	@rm -f $(callingcard).tex
 	@rm -f $(LOG)
 	@rm -f $(texfiles)
-	@rm -f $(dokufiles)
 
 
 
 distclean: clean
 	@rm -f $(csvfiles)
+	@rm -f $(dokufiles)
 	@rm -f $(BUILD)/curriculum.aux
 	@rm -f $(BUILD)/curriculum.log
 	@rm -f $(BUILD)/curriculum.out
