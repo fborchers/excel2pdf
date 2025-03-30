@@ -129,8 +129,8 @@ $(DOKUWIKI)/%.txt: $(CSV)/%.csv
 # placeholders will later be replaced by \newline (see below).
 $(LATEX)/%.txt: $(DOKUWIKI)/%.txt
 	@sed -e 's/\\\\ /NEWLINE /g' $< > $@
-# This code will then be used to create the tex files. But first we 
-# need to build the dictionary with the LaTeX supplementaries.
+# This code will then be used to create the texfiles. But first we 
+# need to build the dictionary SEDSCRIPT with the LaTeX supplementaries.
 
 
 
