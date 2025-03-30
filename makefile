@@ -18,12 +18,12 @@ LATEX:= latex
 BUILD:= build
 
 # Calling Card -- source files are:
-odsfiles:= $(sort $(wildcard $(INPUT)/*.ods))
+infiles:= $(sort $(wildcard $(INPUT)/*.xlsx))
 
 # Intermediate files are:
-csvfiles:= $(patsubst $(INPUT)/%.ods,$(CSV)/%.csv,$(odsfiles))
-dokufiles:=$(patsubst $(INPUT)/%.ods,$(DOKUWIKI)/%.txt,$(odsfiles))
-texfiles:= $(patsubst $(INPUT)/%.ods,$(LATEX)/%.tex,$(odsfiles))
+csvfiles:= $(patsubst $(INPUT)/%.xlsx,$(CSV)/%.csv,$(infiles))
+dokufiles:=$(patsubst $(INPUT)/%.xlsx,$(DOKUWIKI)/%.txt,$(infiles))
+texfiles:= $(patsubst $(INPUT)/%.xlsx,$(LATEX)/%.tex,$(infiles))
 
 # Calling Card ---
 
@@ -32,12 +32,12 @@ define texinput
 	"\clearpage\subsection*{$(1)}\input{$(1)}"
 endef
 
-# Each of the ods-files in the input/ directory will be called:
+# Each of infiles in the input/ directory will be called:
 callingcard:= $(BUILD)/callingcard
-$(callingcard).txt: | $(odsfiles)
+$(callingcard).txt: | $(infiles)
 	@# Initialise:
 	@printf '%s\n\n' '% Calling card für das Curriculum --------' > $@
-	@# Call all the odsfiles present in the input directory:
+	@# Call all the infiles present in the input directory:
 	@printf '%s\n\n' \
 	$(foreach file,$(texfiles),$(call texinput,$(file))) >> $@
 	
@@ -106,7 +106,7 @@ $(SEDSCRIPT): $(DICT)
 .PRECIOUS: $(csvfiles) $(dokufiles)
 
 # Extract from Libre Office file -- now a generic rule:
-$(CSV)/%.csv: $(INPUT)/%.ods
+$(CSV)/%.csv: $(INPUT)/%.xlsx
 	@# 124 for |, 34 for "", 0 (System char set), 1 no of first row, 2 cell format text, c.f. https://help.libreoffice.org/7.3/en-US/text/shared/guide/csv_params.html?DbPAR=SHARED
 	@soffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":124,34,0,1,2 --outdir ./$(CSV)/ $< 1>/dev/null 2>/dev/null
 
