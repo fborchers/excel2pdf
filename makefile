@@ -146,7 +146,7 @@ $(LATEX)/%.txt: $(DOKUWIKI)/%.txt
 columnsspecified := @{}\
 p{8.0cm}<{\\RaggedRight}\
 p{2.5cm}<{\\RaggedRight}@{}\
-p{0.8cm}<{\\RaggedRight}@{}\
+p{0.9cm}<{\\RaggedRight}@{}\
 p{7.5cm}<{\\RaggedRight}\
 p{5.5cm}<{\\RaggedRight}\
 @{}
