@@ -228,7 +228,7 @@ view: | $(outfile)
 
 
 $(pdffile): $(texfile) $(texfiles) $(callingcard).tex
-	pdflatex --output-directory=$(BUILD) $(texfile) >> $(LOG) 2>&1
+	@pdflatex --output-directory=$(BUILD) $(texfile) >> $(LOG) 2>&1
 
 $(outfile): $(pdffile)
 	@cp $< $@

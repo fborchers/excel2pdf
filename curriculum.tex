@@ -25,28 +25,83 @@
 \usepackage{longtable}
 \usepackage{array}
 
+% Font:
 \usepackage{cmbright}
 
-%% hyperlinks:
-\usepackage{hyperref}% load hyperref last.
 
+
+% Header and footer
 \usepackage{fancyhdr}
 
-
-\title{Schulcurriculum Gess ab 2025}
-
-\begin{document}
-
+% Fancy Settings (Page setup)
 \pagestyle{fancy}
 \renewcommand{\headrulewidth}{0pt}
 \fancyhead{}
 \fancyfoot{}
 \fancyfoot[RE,RO]{Seite~\thepage}
 
+
+
+% Section Highlighting ---
+
+\usepackage{titlesec}
+
+
+\titleformat{\subsection}%
+  [hang]% shape
+  {\normalfont\large\bfseries}% format applied to label+text
+  {}% label
+  {0pt}% horizontal separation between label and title body
+  {}% before the title body
+  []% after the title body
+
+
+% Depth of toc:
+\setcounter{tocdepth}{2}% go to level 2.
+
+
+% Appearance in toc
+\usepackage{titletoc}
+\titlecontents{subsection}% FIXME
+    [0em] % distance from left margin
+    {\vspace{0\baselineskip}} % above (global formatting of entry)
+    {\hspace*{0em}} % before w/label (label = ``2.6.1'')
+    {\hspace*{0em}} % before w/o label
+    {\upshape\qquad\thecontentspage} % filler + page (leaders and page num)
+    [] % after
+
+
+
+
+%% hyperlinks:
+\usepackage[hidelinks]{hyperref}% load hyperref last.
+
+
+
+
+
+
+
+
+
+
+\title{Schulcurriculum Gess ab 2025}
+
+\begin{document}
+
 % Titlepage:
 %{\LARGE\textbf{Vokabellisten}} % change title here!
 %\tableofcontents
 %\clearpage
+
+
+
+% print toc:
+\tableofcontents
+
+% add a line for "Inhaltsverzeichnis" to toc:
+\addcontentsline{toc}{subsection}{Inhaltsverzeichnis}
+
 
 % Insert the callingcard here:
 \input{build/callingcard.tex}
