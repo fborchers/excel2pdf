@@ -1,6 +1,5 @@
 
 
-
  ######     ###    ##       ##       #### ##    ##  ######   
 ##    ##   ## ##   ##       ##        ##  ###   ## ##    ##  
 ##        ##   ##  ##       ##        ##  ####  ## ##        
@@ -68,6 +67,11 @@ $(callingcard).tex: $(callingcard).txt
 
 
 
+
+
+
+
+
 ########  ####  ######  ######## 
 ##     ##  ##  ##    ##    ##    
 ##     ##  ##  ##          ##    
@@ -97,6 +101,11 @@ $(SEDSCRIPT): $(DICT)
 
 
 
+
+
+
+
+
 #######   ######## ##    ## ######## ########  ####  ######  
 ##    ##  ##       ###   ## ##       ##     ##  ##  ##    ## 
 ##        ##       ####  ## ##       ##     ##  ##  ##       
@@ -107,19 +116,26 @@ $(SEDSCRIPT): $(DICT)
 
 .PRECIOUS: $(csvfiles) $(dokufiles)
 
+
+# xlsx to CSV
 # Extract from the infiles. This is a generic rule that will apply to 
 # all input files:
 $(CSV)/%.csv: $(INPUT)/%.xlsx
 	@# 124 for |, 34 for "", 0 (System char set), 1 no of first row, 2 cell format text, c.f. https://help.libreoffice.org/7.3/en-US/text/shared/guide/csv_params.html?DbPAR=SHARED
 	@soffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":124,34,0,1,2 --outdir ./$(CSV)/ $< 1>/dev/null 2>/dev/null
 
-# Create the txt-file in DokuWiki format. To do so, add a
-# pipe | at the end ($$) of each line, and split double pipes (||):
+
+# CSV to DokuWiki format
+# Create the txt-file in DokuWiki format. To do so, 
+#	add a pipe | at the end ($$) of each line,
+#	split double pipes (||),
+#	replace | by ^ in the first line of each file.
 #  	-e 's/^/| /g' # matches the beginning of a line
 $(DOKUWIKI)/%.txt: $(CSV)/%.csv
 	@sed \
 	-e 's/||/| |/g' \
 	-e 's/$$/ |/g'  \
+	-e '1 s/|/^/g' \
 	$< > $@
 
 
@@ -133,13 +149,7 @@ $(LATEX)/%.txt: $(DOKUWIKI)/%.txt
 # need to build the dictionary SEDSCRIPT with the LaTeX supplementaries.
 
 
-
-
-
-
-
 # Prepare the LaTeX file ---
-
 # I add specific column widths. Note the difference between
 #   \raggedright (no hyphenation) and
 #   \RaggedRight (with hyphenation, from ragged2e package)
@@ -150,6 +160,7 @@ p{0.9cm}<{\\RaggedRight}@{}\
 p{7.5cm}<{\\RaggedRight}\
 p{5.5cm}<{\\RaggedRight}\
 @{}
+
 
 # After converting to tex with pandoc the routine //sed// will be called:
 # The NEWLINE placeholders have to be changed to ''\newline{}'' 
@@ -167,6 +178,15 @@ $(LATEX)/%.tex: $(LATEX)/%.txt $(SEDSCRIPT)
 	-e 's/\\\\/\\\\ \\midrule/g' | \
 	sed -f $(SEDSCRIPT) \
 	> $@
+
+
+
+
+
+
+
+
+
 
 
 
@@ -228,11 +248,16 @@ echo:
 	@echo $(jobname)
 	@echo $(infiles)
 
+csv: $(csvfiles)
+	@echo "  " $(csvfiles)
+
 tex: $(texfiles)
 	@echo "  " $(texfiles)
 
-csv: $(csvfiles)
-	@echo "  " $(csvfiles)
+doku:$(dokufiles)
+	@#echo "  " $(dokufiles)
+
+all: tex $(callingcard).tex
 
 
 ######## ########  ######  ######## 
