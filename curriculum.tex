@@ -47,7 +47,7 @@
 %
 % set \rightmark to only print the subsection text, not the number:
 \renewcommand*\subsectionmark[1]{\markright{#1}}
-\fancyfoot[L]{\rightmark}
+\fancyfoot[L]{\hyperref[toc-anchor]{\rightmark}}
 
 
 
@@ -111,6 +111,7 @@
 
 % add a line for "Inhaltsverzeichnis" to toc:
 \addcontentsline{toc}{subsection}{Inhaltsverzeichnis}
+\label{toc-anchor}% anchor to jump back to toc
 
 % reset the page number
 \setcounter{page}{0}
