@@ -228,6 +228,7 @@ view: | $(outfile)
 
 
 $(pdffile): $(texfile) $(texfiles) $(callingcard).tex
+	@echo "\tlatex --output-directory=build $(texfile)"
 	@pdflatex --output-directory=$(BUILD) $(texfile) >> $(LOG) 2>&1
 
 $(outfile): $(pdffile)

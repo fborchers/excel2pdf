@@ -14,7 +14,7 @@
 \geometry{%
 	landscape,%
 	top=8mm,
-	left=5mm,right=8mm,
+	left=1.3cm,right=1.3cm,
 	bottom=20mm
 }
 
@@ -33,12 +33,21 @@
 % Header and footer
 \usepackage{fancyhdr}
 
+
+
+
+
+
 % Fancy Settings (Page setup)
 \pagestyle{fancy}
 \renewcommand{\headrulewidth}{0pt}
 \fancyhead{}
 \fancyfoot{}
-\fancyfoot[RE,RO]{Seite~\thepage}
+\fancyfoot[R]{Seite~\thepage}
+%
+% set \rightmark to only print the subsection text, not the number:
+\renewcommand*\subsectionmark[1]{\markright{#1}}
+\fancyfoot[L]{\rightmark}
 
 
 
@@ -97,11 +106,14 @@
 
 
 % print toc:
+\thispagestyle{empty}
 \tableofcontents
 
 % add a line for "Inhaltsverzeichnis" to toc:
 \addcontentsline{toc}{subsection}{Inhaltsverzeichnis}
 
+% reset the page number
+\setcounter{page}{0}
 
 % Insert the callingcard here:
 \input{build/callingcard.tex}
