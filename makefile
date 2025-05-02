@@ -286,6 +286,7 @@ test:
 
 clean: 
 	@rm -f $(pdffile)
+	@rm -f $(dvifile)
 	@rm -f $(outfile)
 	@rm -f $(callingcard).txt
 	@rm -f $(callingcard).tex

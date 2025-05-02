@@ -14,7 +14,7 @@
 \geometry{%
 	landscape,%
 	top=8mm,
-	left=1.3cm,right=1.3cm,
+	left=1.4cm,right=1.3cm,
 	bottom=20mm
 }
 
@@ -71,13 +71,15 @@
 
 % Appearance in toc
 \usepackage{titletoc}
-\titlecontents{subsection}% FIXME
-    [0em] % distance from left margin
-    {\vspace{0\baselineskip}} % above (global formatting of entry)
-    {\hspace*{0em}} % before w/label (label = ``2.6.1'')
-    {\hspace*{0em}} % before w/o label
-    {\upshape\qquad\thecontentspage} % filler + page (leaders and page num)
-    [] % after
+\titlecontents{subsection}%
+    [0em]% distance from left margin
+    {\vspace{0.3\baselineskip}}% above (global formatting of entry)
+    {\hspace*{0em}}% before w/label (label = ``2.6.1'')
+    {\hspace*{0em}}% before w/o label
+    % After the label there will be a filler and the page number:
+    % \makebox[2cm]{\dotfill} creates a filler of length 2cm  
+    {\makebox[2cm]{\dotfill}\upshape\thecontentspage}%
+    []% after
 
 
 
@@ -107,12 +109,15 @@
 
 % print toc:
 \thispagestyle{empty}
+$\;$\vfill
 \tableofcontents
 
 % add a line for "Inhaltsverzeichnis" to toc:
 \addcontentsline{toc}{subsection}{Inhaltsverzeichnis}
 \label{toc-anchor}% anchor to jump back to toc
 
+
+% MAIN TEXT ---
 % reset the page number
 \setcounter{page}{0}
 
