@@ -61,7 +61,7 @@ $(callingcard).tex: $(callingcard).txt
 	   -e 's#{latex/qphase-11.1.tex#{Halbjahr 11.1 -- Qualifikationsphase Abitur#' \
 	   -e 's#{latex/qphase-11.2.tex#{Halbjahr 11.2 -- Qualifikationsphase Abitur#' \
 	   -e 's#{latex/qphase-12.1.tex#{Halbjahr 12.1 -- Qualifikationsphase Abitur#' \
-	   -e 's#{latex/qphase-12.2-astro.tex#{Halbjahr 12.2 -- Wahlbereich Astronomie#' \
+	   -e 's#{latex/klasse-12.4-astro.tex#{Halbjahr 12.2 -- Wahlbereich Astronomie#' \
 	   -e 's#{latex/qphase-12.2-relativity.tex#{Halbjahr 12.2 -- Wahlbereich Relativitätstheorie#' \
 		$< > $@
 
