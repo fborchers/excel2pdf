@@ -29,7 +29,6 @@
 \usepackage{cmbright}
 
 
-
 % Header and footer
 \usepackage{fancyhdr}
 
@@ -51,10 +50,8 @@
 
 
 
-% Section Highlighting ---
-
+%% Section Highlighting ---
 \usepackage{titlesec}
-
 
 \titleformat{\subsection}%
   [hang]% shape
@@ -65,11 +62,12 @@
   []% after the title body
 
 
+%% Table of Contents ---
+
 % Depth of toc:
 \setcounter{tocdepth}{3}% go to level 3 for subsections.
 
-
-% Appearance in toc
+% Appearance of toc
 \usepackage{titletoc}
 \titlecontents{subsection}%
     [0em]% distance from left margin
@@ -81,6 +79,14 @@
     {\makebox[3cm]{\dotfill}\upshape\thecontentspage}%
     []% after
 
+% Remove the section heading from the toc:
+\makeatletter
+\renewcommand{\tableofcontents}{%
+  \@starttoc{toc}%
+}
+\makeatother
+
+% See below how the toc is printed.
 
 
 
@@ -98,15 +104,16 @@
 
 \title{Schulcurriculum Gess ab 2025}
 
+
 \begin{document}
 
-% Titlepage:
+%% Print the titlepage ---
 %{\LARGE\textbf{Vokabellisten}} % change title here!
 %\tableofcontents
 %\clearpage
 
 
-
+%% Print the Table of Contents ---
 % print toc:
 \thispagestyle{empty}
 $\;$\vfill
@@ -117,9 +124,12 @@ $\;$\vfill
 \label{toc-anchor}% anchor to jump back to toc
 
 
-% MAIN TEXT ---
+
+
+%% Print the main text ---
 % reset the page number
 \setcounter{page}{0}
+
 
 % Insert the callingcard here:
 \input{build/callingcard.tex}
