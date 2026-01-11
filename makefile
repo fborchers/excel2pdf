@@ -16,7 +16,14 @@ DOKUWIKI:= dokuwiki
 LATEX:= latex
 BUILD:= build
 
-# Source files are the Excel sheets:
+# Directories with object files:
+OBJDIRS:= $(BUILD) $(LATEX) $(DOKUWIKI) $(CSV)
+
+# Make sure these directories exist:
+$(OBJDIRS):
+	@mkdir -p $@    
+
+# Source files are the Excel sheets in alphabetical order:
 infiles:= $(sort $(wildcard $(INPUT)/*.xlsx))
 
 # Intermediate files are:
@@ -34,7 +41,7 @@ endef
 
 # Each of texfiles in the latex/ directory will be called by pdflatex:
 callingcard:= $(BUILD)/callingcard
-$(callingcard).txt: | $(texfiles)
+$(callingcard).txt: | $(texfiles) $(BUILD)
 	@# Initialise:
 	@printf '%s\n\n' '% Calling card für das Curriculum --------' > $@
 	@# Call all the texfiles present in the latex/ sub-directory:
@@ -88,7 +95,7 @@ SEDSCRIPT:= $(BUILD)/dictionary.sed
 
 # Use the dictionary to build a sed-compatible scriptfile. This SEDSCRIPT 
 # will be used to generate the TeX code (see below). 
-$(SEDSCRIPT): $(DICT)
+$(SEDSCRIPT): $(DICT) | $(BUILD)
 	@#  's#^#s|#'  add a 's|' at the beginning of the line
 	@#  's#\t#|#'  replace a \tab with a pipe |
 	@#  's#$$#|g#' add a slash |g at the end of the line 
@@ -120,7 +127,7 @@ $(SEDSCRIPT): $(DICT)
 # xlsx to CSV
 # Extract from the infiles. This is a generic rule that will apply to 
 # all input files:
-$(CSV)/%.csv: $(INPUT)/%.xlsx
+$(CSV)/%.csv: $(INPUT)/%.xlsx | $(CSV)
 	@# 124 for |, 34 for "", 0 (System char set), 1 no of first row, 2 cell format text, c.f. https://help.libreoffice.org/7.3/en-US/text/shared/guide/csv_params.html?DbPAR=SHARED
 	@soffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":124,34,0,1,2 --outdir ./$(CSV)/ $< 1>/dev/null 2>/dev/null
 
@@ -131,7 +138,7 @@ $(CSV)/%.csv: $(INPUT)/%.xlsx
 #	split double pipes (||),
 #	replace | by ^ in the first line of each file.
 #  	-e 's/^/| /g' # matches the beginning of a line
-$(DOKUWIKI)/%.txt: $(CSV)/%.csv
+$(DOKUWIKI)/%.txt: $(CSV)/%.csv | $(DOKUWIKI)
 	@sed \
 	-e 's/||/| |/g' \
 	-e 's/$$/ |/g'  \
@@ -143,7 +150,7 @@ $(DOKUWIKI)/%.txt: $(CSV)/%.csv
 # This is a workaround to keep the line breaks. The
 # intermediate file $(LATEX)/%.txt has ''NEWLINE'' placeholders. The
 # placeholders will later be replaced by \newline (see below).
-$(LATEX)/%.txt: $(DOKUWIKI)/%.txt
+$(LATEX)/%.txt: $(DOKUWIKI)/%.txt | $(LATEX)
 	@sed -e 's/\\\\ /NEWLINE /g' $< > $@
 # This code will then be used to create the texfiles. But first we 
 # need to build the dictionary SEDSCRIPT with the LaTeX supplementaries.
@@ -243,17 +250,14 @@ $(outfile): $(pdffile)
 ##        ##     ## ##     ## ##   ###    ##    
 ##        ##     ##  #######  ##    ##    ##    
 
-.PHONY: csv tex all clean echo test
+.PHONY: tex all clean echo test
 
 echo:
 	@echo $(jobname)
 	@echo $(infiles)
 
-csv: $(csvfiles)
-	@echo "  " $(csvfiles)
-
 tex: $(texfiles)
-	@echo "  " $(texfiles)
+	@#echo "  " $(texfiles)
 
 doku:$(dokufiles)
 	@#echo "  " $(dokufiles)
@@ -269,7 +273,7 @@ all: tex $(callingcard).tex
    ##    ##       ##    ##    ##    
    ##    ########  ######     ##    
 
-test:
+test: | $(OBJDIRS)
 	@echo "...Looking for pdflatex..."
 	pdflatex -v
 	@echo "\n...Looking for LibreOffice's soffice ..."
