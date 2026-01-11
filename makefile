@@ -201,7 +201,7 @@ $(LATEX)/%.tex: $(LATEX)/%.txt $(SEDSCRIPT)
 # Das Kompilieren mit LaTeX ---
 # get the file name of the source tex file;
 # the file name must coincide with the directory's name:
-jobname := curriculum
+jobname := excel2pdf
 texfile := $(jobname).tex
 
 
@@ -298,10 +298,11 @@ clean:
 distclean: clean
 	@rm -f $(csvfiles)
 	@rm -f $(dokufiles)
-	@rm -f $(BUILD)/curriculum.aux
-	@rm -f $(BUILD)/curriculum.log
-	@rm -f $(BUILD)/curriculum.out
-	@rm -f $(BUILD)/curriculum.toc
-	@# remove the sed script for the dictionary:
+	@rm -f $(BUILD)/$(jobname).aux
+	@rm -f $(BUILD)/$(jobname).log
+	@rm -f $(BUILD)/$(jobname).out
+	@rm -f $(BUILD)/$(jobname).toc
+	@# Next, remove the sed script of the dictionary,
+	@# it will rebuild in the next run:
 	@rm -f $(SEDSCRIPT)
 

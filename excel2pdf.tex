@@ -131,6 +131,11 @@ $\;$\vfill
 \setcounter{page}{0}
 
 
+% This is a bugfix, it is related to how Pandoc handles unnumbered elements, particularly with the longtable package in older LaTeX distributions. 
+\newcounter{none}
+\def\LTcaptype{none}
+
+
 % Insert the callingcard here:
 \input{build/callingcard.tex}
 
