@@ -56,7 +56,7 @@ setzt das Beispiel als PDF.
 ### Beispiel Deckblatt
 
 Das Deckblatt kann angepasst werden, z.B. kann ein Inhaltsverzeichnis eingefügt werden.
-Dies geschieht durch die Eingabe von LaTeX-Code in die Datei `input/myheader.tex`. Anbei ein Beispiel, wie eine solche Datei aussehen kann:
+Dies geschieht durch die Eingabe von LaTeX-Code in die Datei `lib/header.tex`. Anbei ein Beispiel, wie eine solche Datei aussehen kann:
 
     % Titelseite ---
     % \title{Titel meines Dokuments}% Titel
@@ -80,4 +80,4 @@ Dies geschieht durch die Eingabe von LaTeX-Code in die Datei `input/myheader.tex
     % falls gewünscht:
     \setcounter{page}{0}
 
-Die Datei `input/myheader.tex` wird nicht als Quelldatei mitgeliefert (aus dem einfachen Grund, dass die Datei sonst bei einem Update überschrieben werden könnte). Sie wird aber eingelesen, falls sie existiert.
+Die Datei `lib/header.tex` wird nicht als Quelldatei mitgeliefert (aus dem einfachen Grund, dass die Datei sonst bei einem Update überschrieben werden könnte). Sie wird aber eingelesen, falls sie existiert.
