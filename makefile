@@ -14,10 +14,11 @@ INPUT:=input
 CSV:=csv
 DOKUWIKI:= dokuwiki
 LATEX:= latex
+LIB := lib
 BUILD:= build
 
 # Directories with object files:
-OBJDIRS:= $(BUILD) $(LATEX) $(DOKUWIKI) $(CSV)
+OBJDIRS:= $(BUILD) $(LIB) $(LATEX) $(DOKUWIKI) $(CSV)
 
 # Make sure these directories exist:
 $(OBJDIRS):
@@ -95,14 +96,14 @@ SEDSCRIPT:= $(BUILD)/dictionary.sed
 
 # Sicherstellen, dass $(DICT) existiert. Dieser Code wird nur
 # ausgeführt, wenn die Datei $(DICT) nicht existiert. 
-$(DICT):
+$(DICT): | $(LIB)
 	@printf '%s\t%s\n' 'FORMELSPRACHE' 'FORMELSPRACHE' > $@
 	@printf '%s\t%s\n' 'a∙b = c∙d' '$$a\\cdot b = c\\cdot d$$' >>$@
 
 
 # Use the dictionary to build a sed-compatible scriptfile. This SEDSCRIPT 
 # will be used to generate the TeX code (see below). 
-$(SEDSCRIPT): $(DICT) | $(BUILD)
+$(SEDSCRIPT): $(DICT) | $(BUILD) 
 	@#  's#^#s|#'  add a 's|' at the beginning of the line
 	@#  's#\t#|#'  replace a \tab with a pipe |
 	@#  's#$$#|g#' add a slash |g at the end of the line 
@@ -280,7 +281,7 @@ all: tex $(callingcard).tex
    ##    ##       ##    ##    ##    
    ##    ########  ######     ##    
 
-test: | $(OBJDIRS)
+test: | $(OBJDIRS) $(DICT)
 	@echo "...Looking for pdflatex..."
 	pdflatex -v
 	@echo "\n...Looking for LibreOffice's soffice ..."
@@ -303,7 +304,7 @@ clean:
 	@rm -f $(callingcard).tex
 	@rm -f $(LOG)
 	@rm -f $(texfiles)
-
+	@# do not delete $(DICT), it may have been modified by user.
 
 
 distclean: clean
@@ -314,6 +315,6 @@ distclean: clean
 	@rm -f $(BUILD)/$(jobname).out
 	@rm -f $(BUILD)/$(jobname).toc
 	@# Next, remove the sed script of the dictionary,
-	@# it will rebuild in the next run:
+	@# it will be rebuilt in the next run:
 	@rm -f $(SEDSCRIPT)
 
