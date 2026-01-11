@@ -1,13 +1,17 @@
 \documentclass[11pt]{article}
 
-%% font setup for latex:
+% Eingabeformat:
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 
-\usepackage[ngerman]{babel}
+\usepackage[ngerman]{babel}% Sprache
+
+% In den Tabellen darf es viele Worttrennungen am Ende der
+% Zeilen geben, wir erlauben das mit:
 \hyphenpenalty=12 % Default is 50
 
-\usepackage{ragged2e}
+
+\usepackage{ragged2e}% Flattersatz
 
 
 \usepackage{geometry}
@@ -37,7 +41,7 @@
 
 
 
-% Fancy Settings (Page setup)
+% Fancy Settings (Page setup) ---
 \pagestyle{fancy}
 \renewcommand{\headrulewidth}{0pt}
 \fancyhead{}
@@ -102,41 +106,27 @@
 
 
 
-\title{Schulcurriculum Gess ab 2025}
 
 
 \begin{document}
 
-%% Print the titlepage ---
-%{\LARGE\textbf{Vokabellisten}} % change title here!
-%\tableofcontents
-%\clearpage
 
-
-%% Print the Table of Contents ---
-% print toc:
-\thispagestyle{empty}
-$\;$\vfill
-\tableofcontents
-
-% add a line for "Inhaltsverzeichnis" to toc:
-\addcontentsline{toc}{subsection}{Inhaltsverzeichnis}
-\label{toc-anchor}% anchor to jump back to toc
+\IfFileExists{./input/myheader.tex}{
+    % Input file may include ''\tableofcontents'':
+    \input{./input/myheader.tex}
+}{
+    % No action if file not found
+}
 
 
 
-
-%% Print the main text ---
-% reset the page number
-\setcounter{page}{0}
-
-
-% This is a bugfix, it is related to how Pandoc handles unnumbered elements, particularly with the longtable package in older LaTeX distributions. 
+% This is a bugfix, it is related to how Pandoc handles unnumbered elements, particularly with the longtable package in older LaTeX distributions. Comment out if you have a newer version that does no longer require this bugfix. 
 \newcounter{none}
 \def\LTcaptype{none}
 
 
-% Insert the callingcard here:
+% Insert the callingcard here. This will input all the xlsx source 
+% files from the /input directory:
 \input{build/callingcard.tex}
 
 
