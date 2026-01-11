@@ -93,6 +93,13 @@ $(callingcard).tex: $(callingcard).txt
 DICT := lib/dictionary.csv
 SEDSCRIPT:= $(BUILD)/dictionary.sed
 
+# Sicherstellen, dass $(DICT) existiert. Dieser Code wird nur
+# ausgeführt, wenn die Datei $(DICT) nicht existiert. 
+$(DICT):
+	@printf '%s\t%s\n' 'FORMELSPRACHE' 'FORMELSPRACHE' > $@
+	@printf '%s\t%s\n' 'a∙b = c∙d' '$$a\\cdot b = c\\cdot d$$' >>$@
+
+
 # Use the dictionary to build a sed-compatible scriptfile. This SEDSCRIPT 
 # will be used to generate the TeX code (see below). 
 $(SEDSCRIPT): $(DICT) | $(BUILD)
@@ -178,7 +185,7 @@ p{5.5cm}<{\\RaggedRight}\
 # Das dictionary SEDSCRIPT wird verwendet, um speziellen LaTeX-Code 
 # einzufügen, z.B. Formeln und andere Mathematik.
 $(LATEX)/%.tex: $(LATEX)/%.txt $(SEDSCRIPT)
-	@pandoc -f dokuwiki -t latex $< | \
+	@pandoc --wrap=preserve -f dokuwiki -t latex $< | \
 	sed \
 	-e 's/NEWLINE/\\newline{}/g' \
 	-e 's/@{}lllll@{}/$(columnsspecified)/g' \
