@@ -98,19 +98,21 @@ SEDSCRIPT:= $(BUILD)/dictionary.sed
 # ausgeführt, wenn die Datei $(DICT) nicht existiert. 
 $(DICT): | $(LIB)
 	@printf '%s\t%s\n' 'FORMELSPRACHE' 'FORMELSPRACHE' > $@
-	@printf '%s\t%s\n' 'a∙b = c∙d' '$$a\\cdot b = c\\cdot d$$' >>$@
+	@# Recall that Make will collaps $$ to $ for bash:
+	@printf '%s\t%s\n' 'a∙b = c∙d' '$$a\cdot b = c\cdot d$$' >>$@
 
 
 # Use the dictionary to build a sed-compatible scriptfile. This SEDSCRIPT 
 # will be used to generate the TeX code (see below). 
 $(SEDSCRIPT): $(DICT) | $(BUILD) 
 	@#  's#^#s|#'  add a 's|' at the beginning of the line
+	@#  's#\t\t#|#' replace a \tab\tab with a pipe |
 	@#  's#\t#|#'  replace a \tab with a pipe |
 	@#  's#$$#|g#' add a slash |g at the end of the line 
-	@# 			   (make will collaps $$ to $ for bash.)
+	@# 			   (recall that Make will collaps $$ to $ for bash.)
 	@#  's#[#\\[#g'
-	@sed -e 's#^#s|#' -e 's#\t\t#|#' -e 's#\t#|#' -e 's#$$#|g#' $< >$@
-# This script file will be used with all the tex-files below.
+	@sed -e 's#^#s|#' -e 's#\t\t#|#' -e 's#\t#|#' -e 's#$$#|g#' -e 's#\\#\\\\#g' $< >$@
+# The script file $(SEDSCRIPT) will be used with all the tex-files below.
 
 
 
@@ -243,7 +245,7 @@ view: | $(outfile)
 
 
 $(pdffile): $(texfile) $(texfiles) $(callingcard).tex
-	@echo "\tpdflatex --output-directory=build $(texfile)"
+	@echo "pdflatex --output-directory=build $(texfile)"
 	@pdflatex --output-directory=$(BUILD) $(texfile) >> $(LOG) 2>&1
 
 $(outfile): $(pdffile)
@@ -282,10 +284,18 @@ all: tex $(callingcard).tex
    ##    ########  ######     ##    
 
 test: | $(OBJDIRS) $(DICT)
+	@# Output of ''make test'' will be verbose:
+	@# Check for ''sed'':
+	@echo "...Looking for sed..."
+	@echo "sEd is running." | sed -e 's/E/e/g'
+	@# pdflatex:
 	@echo "...Looking for pdflatex..."
-	pdflatex -v
+	@pdflatex -v
+	@# LibreOffice's soffice CLI:
 	@echo "\n...Looking for LibreOffice's soffice ..."
 	soffice --version
+	@# pandoc:
+	@pandoc -v
 
 
 #######  ##       ########    ###    ##    ## 

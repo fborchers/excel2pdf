@@ -33,7 +33,10 @@ Die Ausgabe erfolgt als PDF im Querformat.
 ### Formeln
 
 Formeln können in den Eingabedateien verwendet werden, man tippt die Formel in der Datei mit UTF8-Sonderzeichen ein, zum Beispiel a∙b = c∙d. Damit die Formel später von LaTeX richtig gesetzt wird, hinterlegt man in einem Nachschlagewerk den korrekten LaTeX-Code der Formel.
-In der Datei `lib/dictionary.txt` werden die Formeln in UTF8-Sonderzeichen und in LaTeX-Code gesammelt. Sie sind durch ein `\t` voneinander getrennt. Der LaTeX-Code muss anstelle der backslashes `\` doppelte backslashes enthalten `\\`
+In der Datei `lib/dictionary.txt` werden die Formeln in UTF8-Sonderzeichen und in LaTeX-Code gesammelt. Sie sind durch ein tab `\t` voneinander getrennt: zunächst wie die Formel in UTF8-Sonderzeichen eingetippt wurde, nach dem tab wie die Formel von LaTeX gesetzt werden soll. Es folgt ein Beispiel für eine Zeile aus diesem Nachschlagewerk:
+
+    a∙b = c∙d   $a\cdot b = c\cdot d$
+
 
 ### Beschreibung der Maschinerie (für Liebhaber)
 
@@ -43,7 +46,7 @@ Die Quelldatei wird mit LibreOffice über das Kommandozeileninterface
 
 zunächst nach `csv` übertragen. Daraus resultiert eine Datei im DokuWiki-Format, die mit `pandoc` nach LaTeX übertragen wird. Sobald alle Dateien in LaTeX-Format vorliegen, werden sie zusammen gesetzt und das PDF erzeugt.
 
-Weil im DokuWiki-Format jediglich die Position der Pipe `|` über die Spalten entscheidet, ist es (auf den ersten Blick) besser als Markdown geeignet, die Tabelle abzubilden. Aus diesem Grund erfolgt die Eingabe im DokuWiki-Format und nicht als Markdown.
+Weil im DokuWiki-Format lediglich die Position der Pipe `|` über die Spalten entscheidet, ist es (auf den ersten Blick) besser als Markdown geeignet, die Tabelle abzubilden. Aus diesem Grund erfolgt die Eingabe im DokuWiki-Format und nicht als Markdown.
 
 ### Beispiel: ein Curriculum
 
@@ -56,7 +59,7 @@ setzt das Beispiel als PDF.
 ### Beispiel Deckblatt
 
 Das Deckblatt kann angepasst werden, z.B. kann ein Inhaltsverzeichnis eingefügt werden.
-Dies geschieht durch die Eingabe von LaTeX-Code in die Datei `lib/header.tex`. Anbei ein Beispiel, wie eine solche Datei aussehen kann:
+Dies geschieht durch optionale Eingabe von LaTeX-Code in die Datei `lib/header.tex`. Anbei ein Beispiel, wie eine solche Datei aussehen kann:
 
     % Titelseite ---
     % \title{Titel meines Dokuments}% Titel
