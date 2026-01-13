@@ -106,12 +106,14 @@ $(DICT): | $(LIB)
 # will be used to generate the TeX code (see below). 
 $(SEDSCRIPT): $(DICT) | $(BUILD) 
 	@#  's#^#s|#'  add a 's|' at the beginning of the line
+	@#  's#\t\t\t\t#|#' replace a \tab\tab\tab\tab with a pipe |
+	@#  's#\t\t\t#|#' replace a \tab\tab\tab with a pipe |
 	@#  's#\t\t#|#' replace a \tab\tab with a pipe |
 	@#  's#\t#|#'  replace a \tab with a pipe |
 	@#  's#$$#|g#' add a slash |g at the end of the line 
 	@# 			   (recall that Make will collaps $$ to $ for bash.)
 	@#  's#[#\\[#g'
-	@sed -e 's#^#s|#' -e 's#\t\t#|#' -e 's#\t#|#' -e 's#$$#|g#' -e 's#\\#\\\\#g' $< >$@
+	@sed -e 's#^#s|#' -e 's#\t\t\t\t#|#' -e 's#\t\t\t#|#' -e 's#\t\t#|#' -e 's#\t#|#' -e 's#$$#|g#' -e 's#\\#\\\\#g' $< >$@
 # The script file $(SEDSCRIPT) will be used with all the tex-files below.
 
 
