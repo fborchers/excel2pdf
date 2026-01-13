@@ -11,7 +11,7 @@ Verwendung:
     make test 
     make pdf
 
-Voraussetzung: LaTeX, LibreOffice, `pandoc`, `make`, `sed`.
+Voraussetzungen: LaTeX, LibreOffice, `pandoc`, `make`, `sed`.
 
 ## README
 
@@ -19,7 +19,7 @@ Voraussetzung: LaTeX, LibreOffice, `pandoc`, `make`, `sed`.
 
 Die Eingabe erfolgt über Tabellen im MS Excel-Format. Dies hat den Vorteil, dass die Tabellen sehr übersichtlich dargestellt werden und Inhalte (Zeilen) leicht von der einen Stelle an eine andere verschoben werden können. Alle Excel-Tabellen aus dem Unterordner `input/` werden in alphabetischer Reihenfolge angefügt.
 
-Es werden genau fünf Spalten gesetzt, die erste Spalte bleibt frei (aus technischen Gründen).
+Es werden genau fünf Spalten gesetzt, die Spalten A-E aus dem Tabellenkalkulationsprogramm. 
 Der Text der Tabellen hat entweder kein Markup (plain text) oder muss im [DokuWiki-Format](https://www.dokuwiki.org/wiki:syntax) eingegeben werden. Angefügt ist ein Beispiel, wie die Eingabedatei aussehen kann:
 
 <img width="1151" height="380" alt="Image" src="https://github.com/user-attachments/assets/78b02117-294f-4f7d-92e1-1540bf76c79b" />

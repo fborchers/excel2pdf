@@ -146,14 +146,15 @@ $(CSV)/%.csv: $(INPUT)/%.xlsx | $(CSV)
 
 # CSV to DokuWiki format
 # Create the txt-file in DokuWiki format. To do so, 
-#	add a pipe | at the end ($$) of each line,
-#	split double pipes (||),
-#	replace | by ^ in the first line of each file.
-#  	-e 's/^/| /g' # matches the beginning of a line
+#	 - split double pipes (||),
+#	 - add a pipe | at the end ($$) of each line and at
+#   - the beginning of a line with	-e 's/^/| /g'
+#	 - replace | by ^ in the first line of each file
 $(DOKUWIKI)/%.txt: $(CSV)/%.csv | $(DOKUWIKI)
 	@sed \
 	-e 's/||/| |/g' \
 	-e 's/$$/ |/g'  \
+	-e 's/^/| /g'  \
 	-e '1 s/|/^/g' \
 	$< > $@
 
