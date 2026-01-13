@@ -22,7 +22,7 @@ Die Eingabe erfolgt über Tabellen im MS Excel-Format. Dies hat den Vorteil, das
 Es werden genau fünf Spalten gesetzt, die Spalten A-E aus dem Tabellenkalkulationsprogramm. 
 Der Text der Tabellen hat entweder kein Markup (plain text) oder muss im [DokuWiki-Format](https://www.dokuwiki.org/wiki:syntax) eingegeben werden. Angefügt ist ein Beispiel, wie die Eingabedatei aussehen kann:
 
-<img width="1151" height="380" alt="Image" src="https://github.com/user-attachments/assets/78b02117-294f-4f7d-92e1-1540bf76c79b" />
+<img width="400" height="124" alt="Image" src="https://github.com/user-attachments/assets/e67b8c99-a7bd-428d-a626-633d212df778" />
 
 
 
