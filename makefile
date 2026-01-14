@@ -24,13 +24,18 @@ OBJDIRS:= $(BUILD) $(LIB) $(LATEX) $(DOKUWIKI) $(CSV)
 $(OBJDIRS):
 	@mkdir -p $@    
 
-# Source files are the Excel sheets in alphabetical order:
-infiles:= $(sort $(wildcard $(INPUT)/*.xlsx))
+# Source files are the table files in alphabetical order:
+xlsxfiles:= $(wildcard $(INPUT)/*.xlsx)
+odsfiles := $(wildcard $(INPUT)/*.ods)
 
-# Intermediate files are:
-csvfiles:= $(patsubst $(INPUT)/%.xlsx,$(CSV)/%.csv,$(infiles))
-dokufiles:=$(patsubst $(INPUT)/%.xlsx,$(DOKUWIKI)/%.txt,$(infiles))
-texfiles:= $(patsubst $(INPUT)/%.xlsx,$(LATEX)/%.tex,$(infiles))
+# csv intermediate files are:
+csvfiles:= $(patsubst $(INPUT)/%.xlsx,$(CSV)/%.csv,$(xlsxfiles))
+csvfiles+= $(patsubst $(INPUT)/%.ods,$(CSV)/%.csv,$(odsfiles))
+csvfiles:= $(sort $(csvfiles))
+
+# further intermediate files are:
+dokufiles:=$(patsubst $(CSV)/%.csv,$(DOKUWIKI)/%.txt,$(csvfiles))
+texfiles:= $(patsubst $(CSV)/%.csv,$(LATEX)/%.tex,$(csvfiles))
 
 
 # Build Routine for the Calling Card ---
@@ -137,12 +142,18 @@ $(SEDSCRIPT): $(DICT) | $(BUILD)
 
 
 # xlsx to CSV
-# Extract from the infiles. This is a generic rule that will apply to 
-# all input files:
+# Extract from the xlsx files. This is a generic rule that will apply to 
+# all input files in MS Office format:
 $(CSV)/%.csv: $(INPUT)/%.xlsx | $(CSV)
 	@# 124 for |, 34 for "", 0 (System char set), 1 no of first row, 2 cell format text, c.f. https://help.libreoffice.org/7.3/en-US/text/shared/guide/csv_params.html?DbPAR=SHARED
 	@soffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":124,34,0,1,2 --outdir ./$(CSV)/ $< 1>/dev/null 2>/dev/null
 
+# ods to CSV
+# Extract from Libre Office's ods files. This is another generic rule that
+# will apply to all files in that format:
+$(CSV)/%.csv: $(INPUT)/%.ods | $(CSV)
+	@# 124 for |, 34 for "", 0 (System char set), 1 no of first row, 2 cell format text, c.f. https://help.libreoffice.org/7.3/en-US/text/shared/guide/csv_params.html?DbPAR=SHARED
+	@soffice --headless --convert-to csv:"Text - txt - csv (StarCalc)":124,34,0,1,2 --outdir ./$(CSV)/ $< 1>/dev/null 2>/dev/null
 
 # CSV to DokuWiki format
 # Create the txt-file in DokuWiki format. To do so, 
@@ -267,7 +278,7 @@ $(outfile): $(pdffile)
 
 echo:
 	@echo $(jobname)
-	@echo $(infiles)
+	@echo $(csvfiles)
 
 tex: $(texfiles)
 	@#echo "  " $(texfiles)

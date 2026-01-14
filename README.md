@@ -17,14 +17,14 @@ Voraussetzungen: LaTeX, LibreOffice, `pandoc`, `make`, `sed`.
 
 ### Eingabeformat
 
-Die Eingabe erfolgt über Tabellen im MS Excel-Format. Dies hat den Vorteil, dass die Tabellen sehr übersichtlich dargestellt werden und Inhalte (Zeilen) leicht von der einen Stelle an eine andere verschoben werden können. Alle Excel-Tabellen aus dem Unterordner `input/` werden in alphabetischer Reihenfolge angefügt.
+Die Eingabe erfolgt über Tabellen im MS Excel-Format oder LibreOffice-Format. Dies hat den Vorteil, dass die Tabellen sehr übersichtlich dargestellt werden und Inhalte (Zeilen) leicht von der einen Stelle an eine andere verschoben werden können. Alle Tabellen aus dem Unterordner `input/` werden in alphabetischer Reihenfolge angefügt, sie müssen aber die Dateiendung `.xlsx` oder `.ods` tragen.
 
 Es werden genau fünf Spalten gesetzt, die Spalten A-E aus dem Tabellenkalkulationsprogramm. 
 Der Text der Tabellen hat entweder kein Markup (plain text) oder muss im [DokuWiki-Format](https://www.dokuwiki.org/wiki:syntax) eingegeben werden. Angefügt ist ein Beispiel, wie die Eingabedatei aussehen kann:
 
 <img width="400" height="124" alt="Image" src="https://github.com/user-attachments/assets/e67b8c99-a7bd-428d-a626-633d212df778" />
 
-
+Die Datei findet sich unter `input/00-beispiel.xlsx`. 
 
 ### PDF-Ausgabe
 
@@ -50,7 +50,7 @@ Weil im DokuWiki-Format lediglich die Position der Pipe `|` über die Spalten en
 
 ### Beispiel: ein Curriculum
 
-Die oben abgebildete Eingabedatei ist als `ein-beispiel.xlsx` beigefügt. Sie enthält das Beispiel, eine Zeile aus einem Curriculum. Der Aufruf
+Die oben abgebildete Eingabedatei ist als `input/00-beispiel.xlsx` beigefügt. Sie enthält das Beispiel, eine Zeile aus einem Curriculum. Der Aufruf
 
     make pdf
 
@@ -84,3 +84,10 @@ Dies geschieht durch optionale Eingabe von LaTeX-Code in die Datei `lib/header.t
     \setcounter{page}{0}
 
 Die Datei `lib/header.tex` wird nicht als Quelldatei mitgeliefert (aus dem einfachen Grund, dass die Datei sonst bei einem Update überschrieben werden könnte). Sie wird aber eingelesen, falls sie existiert.
+
+
+### Bekannte Probleme / Known Issues
+Ein Problem tritt auf, wenn zwei Eingabetabellen vorliegen, die denselben Dateinamen, aber unterschiedliche Endung tragen, also bspw. `00-beispiel.xlsx` und `00-beispiel.ods`. Es wird nur eine dieser Dateien an die Ausgabe übergeben. Die Dateinamen müssen daher auch ohne Dateiendung unterscheidbar sein.
+
+
+
